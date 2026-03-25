@@ -6,6 +6,7 @@ import {
   appendLog,
   computeOverallGwa,
   computeTermGwa,
+  createDefaultStudentProfile,
   createDefaultSubjectGrades,
   makeId,
   normalizeSubjectGrades,
@@ -61,8 +62,9 @@ export default function CouncilorDashboard() {
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
   const [newStudentName, setNewStudentName] = useState("");
   const [newStudentNumber, setNewStudentNumber] = useState("");
-  const [newStudentProgram, setNewStudentProgram] = useState("BSIT");
-  const [newStudentYearLevel, setNewStudentYearLevel] = useState("1ST YR");
+  const [newStudentProfile, setNewStudentProfile] = useState(() =>
+    createDefaultStudentProfile({ program: "BSIT", yearLevel: "1ST YR" }),
+  );
   const [newStudentImage, setNewStudentImage] = useState("");
 
   const [masterStudentId, setMasterStudentId] = useState<string | null>(null);
@@ -139,6 +141,31 @@ export default function CouncilorDashboard() {
 
   const visibleCards = filteredStudents.slice(0, 25);
   const emptySlots = Math.max(0, 25 - visibleCards.length);
+
+  const updateNewStudentProfile = <K extends keyof Student["profile"]>(
+    key: K,
+    value: Student["profile"][K],
+  ) => {
+    setNewStudentProfile((current) => ({
+      ...current,
+      [key]: value,
+    }));
+  };
+
+  const updateMasterProfile = <K extends keyof Student["profile"]>(
+    studentId: string,
+    key: K,
+    value: Student["profile"][K],
+  ) => {
+    updateDatabase((current) => ({
+      ...current,
+      students: current.students.map((entry) =>
+        entry.id === studentId
+          ? { ...entry, profile: { ...entry.profile, [key]: value } }
+          : entry,
+      ),
+    }));
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-slate-100">
@@ -390,17 +417,17 @@ export default function CouncilorDashboard() {
               
               <div className="grid grid-cols-2 gap-3">
                 <select
-                  value={newStudentProgram}
-                  onChange={(e) => setNewStudentProgram(e.target.value)}
+                  value={newStudentProfile.program}
+                  onChange={(e) => updateNewStudentProfile("program", e.target.value)}
                   className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 >
                   <option value="BSIT">BSIT</option>
-                  <option value="BSEDUC">BSEDUC</option>
-                  <option value="BSBA">BSBA</option>
+                  <option value="BSCS">BSCS</option>
+                  <option value="BSCE">BSCE</option>
                 </select>
                 <select
-                  value={newStudentYearLevel}
-                  onChange={(e) => setNewStudentYearLevel(e.target.value)}
+                  value={newStudentProfile.yearLevel}
+                  onChange={(e) => updateNewStudentProfile("yearLevel", e.target.value)}
                   className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 >
                   <option value="1ST YR">1ST YR</option>
@@ -410,8 +437,186 @@ export default function CouncilorDashboard() {
                 </select>
               </div>
 
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <input
+                  value={newStudentProfile.birthDate}
+                  onChange={(e) => updateNewStudentProfile("birthDate", e.target.value)}
+                  placeholder="Birth date (YYYY-MM-DD)"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.birthPlace}
+                  onChange={(e) => updateNewStudentProfile("birthPlace", e.target.value)}
+                  placeholder="Birth place"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.address}
+                  onChange={(e) => updateNewStudentProfile("address", e.target.value)}
+                  placeholder="Address"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.telCellNo}
+                  onChange={(e) => {
+                    updateNewStudentProfile("telCellNo", e.target.value);
+                    updateNewStudentProfile("contact", e.target.value);
+                  }}
+                  placeholder="Tel/Cell no."
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.sex}
+                  onChange={(e) => updateNewStudentProfile("sex", e.target.value)}
+                  placeholder="Sex"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.boardingHouse}
+                  onChange={(e) => updateNewStudentProfile("boardingHouse", e.target.value)}
+                  placeholder="Boarding house"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.landlordOrLandlady}
+                  onChange={(e) =>
+                    updateNewStudentProfile("landlordOrLandlady", e.target.value)
+                  }
+                  placeholder="Name of landlord/landlady"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.previousSchoolAttended}
+                  onChange={(e) =>
+                    updateNewStudentProfile("previousSchoolAttended", e.target.value)
+                  }
+                  placeholder="Previous school attended"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <textarea
+                  value={newStudentProfile.outstandingActivitiesHonorsAwards}
+                  onChange={(e) =>
+                    updateNewStudentProfile(
+                      "outstandingActivitiesHonorsAwards",
+                      e.target.value,
+                    )
+                  }
+                  placeholder="Outstanding activities, honors, awards"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm md:col-span-2"
+                  rows={2}
+                />
+                <input
+                  value={newStudentProfile.motherName}
+                  onChange={(e) => updateNewStudentProfile("motherName", e.target.value)}
+                  placeholder="Mother&apos;s name"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.motherAge}
+                  onChange={(e) => updateNewStudentProfile("motherAge", e.target.value)}
+                  placeholder="Mother&apos;s age"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.motherOccupation}
+                  onChange={(e) =>
+                    updateNewStudentProfile("motherOccupation", e.target.value)
+                  }
+                  placeholder="Mother&apos;s occupation"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.fatherName}
+                  onChange={(e) => updateNewStudentProfile("fatherName", e.target.value)}
+                  placeholder="Father&apos;s name"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.fatherAge}
+                  onChange={(e) => updateNewStudentProfile("fatherAge", e.target.value)}
+                  placeholder="Father&apos;s age"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.fatherOccupation}
+                  onChange={(e) =>
+                    updateNewStudentProfile("fatherOccupation", e.target.value)
+                  }
+                  placeholder="Father&apos;s occupation"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.motherFatherRemarried}
+                  onChange={(e) =>
+                    updateNewStudentProfile("motherFatherRemarried", e.target.value)
+                  }
+                  placeholder="Mother/Father remarried details"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.stepParentOrGuardianName}
+                  onChange={(e) =>
+                    updateNewStudentProfile("stepParentOrGuardianName", e.target.value)
+                  }
+                  placeholder="Step-parent or guardian name"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.stepParentOrGuardianAge}
+                  onChange={(e) =>
+                    updateNewStudentProfile("stepParentOrGuardianAge", e.target.value)
+                  }
+                  placeholder="Step-parent or guardian age"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+                <input
+                  value={newStudentProfile.stepParentOrGuardianOccupation}
+                  onChange={(e) =>
+                    updateNewStudentProfile(
+                      "stepParentOrGuardianOccupation",
+                      e.target.value,
+                    )
+                  }
+                  placeholder="Step-parent or guardian occupation"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-2 text-sm font-semibold text-slate-700 md:grid-cols-3">
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={newStudentProfile.parentsMarried}
+                    onChange={(e) =>
+                      updateNewStudentProfile("parentsMarried", e.target.checked)
+                    }
+                  />
+                  Parents married
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={newStudentProfile.parentsSeparated}
+                    onChange={(e) =>
+                      updateNewStudentProfile("parentsSeparated", e.target.checked)
+                    }
+                  />
+                  Parents separated
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={newStudentProfile.parentsNotMarried}
+                    onChange={(e) =>
+                      updateNewStudentProfile("parentsNotMarried", e.target.checked)
+                    }
+                  />
+                  Parents not married
+                </label>
+              </div>
+
               <button
-                onClick={() => {
+                onClick={async () => {
                   const name = newStudentName.trim();
                   const studentNumber = newStudentNumber.trim();
                   if (!name || !studentNumber) {
@@ -425,17 +630,58 @@ export default function CouncilorDashboard() {
                   const shouldContinue = window.confirm("Save this new student record? Click OK to continue or Cancel to review.");
                   if (!shouldContinue) return;
 
+                  const profilePayload = createDefaultStudentProfile(newStudentProfile);
+
+                  try {
+                    const response = await fetch("/api/students", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        studentNumber,
+                        fullName: name,
+                        imageUrl: newStudentImage || undefined,
+                        profile: {
+                          ...profilePayload,
+                          guardian:
+                            profilePayload.stepParentOrGuardianName ||
+                            profilePayload.motherName ||
+                            profilePayload.fatherName ||
+                            "To be updated",
+                          contact: profilePayload.telCellNo || "To be updated",
+                        },
+                      }),
+                    });
+
+                    if (!response.ok) {
+                      const result = (await response.json().catch(() => ({}))) as {
+                        error?: string;
+                      };
+                      throw new Error(result.error ?? "Failed to save student to database.");
+                    }
+                  } catch (error) {
+                    const message =
+                      error instanceof Error ? error.message : "Failed to save student to database.";
+                    setNotice({
+                      type: "error",
+                      text: `${message} Saved locally as fallback.`,
+                    });
+                  }
+
                   const newStudent: Student = {
                     id: `stud-${makeId()}`,
                     studentNumber,
                     fullName: name,
                     status: "ACTIVE",
                     profile: {
-                      age: 18,
-                      guardian: "To be updated",
-                      contact: "To be updated",
-                      program: newStudentProgram,
-                      yearLevel: newStudentYearLevel,
+                      ...profilePayload,
+                      guardian:
+                        profilePayload.stepParentOrGuardianName ||
+                        profilePayload.motherName ||
+                        profilePayload.fatherName ||
+                        "To be updated",
+                      contact: profilePayload.telCellNo || "To be updated",
                     },
                     imageUrl: newStudentImage || undefined,
                     assignment: { teacherId: null, sectionId: null },
@@ -458,6 +704,9 @@ export default function CouncilorDashboard() {
 
                   setNewStudentName("");
                   setNewStudentNumber("");
+                  setNewStudentProfile(
+                    createDefaultStudentProfile({ program: "BSIT", yearLevel: "1ST YR" }),
+                  );
                   setNewStudentImage("");
                   setShowAddStudentModal(false);
                   setNotice({
@@ -606,17 +855,9 @@ export default function CouncilorDashboard() {
                   Guardian
                   <input
                     value={masterStudent.profile.guardian}
-                    onChange={(e) => {
-                      const guardian = e.target.value;
-                      updateDatabase((current) => ({
-                        ...current,
-                        students: current.students.map((entry) =>
-                          entry.id === masterStudent.id
-                            ? { ...entry, profile: { ...entry.profile, guardian } }
-                            : entry,
-                        ),
-                      }));
-                    }}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "guardian", e.target.value)
+                    }
                     className="rounded-lg border border-slate-300 px-3 py-2"
                   />
                 </label>
@@ -625,39 +866,307 @@ export default function CouncilorDashboard() {
                   Contact
                   <input
                     value={masterStudent.profile.contact}
-                    onChange={(e) => {
-                      const contact = e.target.value;
-                      updateDatabase((current) => ({
-                        ...current,
-                        students: current.students.map((entry) =>
-                          entry.id === masterStudent.id
-                            ? { ...entry, profile: { ...entry.profile, contact } }
-                            : entry,
-                        ),
-                      }));
-                    }}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "contact", e.target.value)
+                    }
                     className="rounded-lg border border-slate-300 px-3 py-2"
                   />
                 </label>
 
                 <label className="grid gap-1 text-sm font-semibold">
                   Program
-                  <input
+                  <select
                     value={masterStudent.profile.program}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "program", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  >
+                    <option value="BSIT">BSIT</option>
+                    <option value="BSCS">BSCS</option>
+                    <option value="BSCE">BSCE</option>
+                  </select>
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Birth date
+                  <input
+                    value={masterStudent.profile.birthDate}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "birthDate", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Birth place
+                  <input
+                    value={masterStudent.profile.birthPlace}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "birthPlace", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold md:col-span-2">
+                  Address
+                  <input
+                    value={masterStudent.profile.address}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "address", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Tel/Cell no.
+                  <input
+                    value={masterStudent.profile.telCellNo}
                     onChange={(e) => {
-                      const program = e.target.value;
-                      updateDatabase((current) => ({
-                        ...current,
-                        students: current.students.map((entry) =>
-                          entry.id === masterStudent.id
-                            ? { ...entry, profile: { ...entry.profile, program } }
-                            : entry,
-                        ),
-                      }));
+                      updateMasterProfile(masterStudent.id, "telCellNo", e.target.value);
+                      updateMasterProfile(masterStudent.id, "contact", e.target.value);
                     }}
                     className="rounded-lg border border-slate-300 px-3 py-2"
                   />
                 </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Sex
+                  <input
+                    value={masterStudent.profile.sex}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "sex", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold md:col-span-2">
+                  Boarding house
+                  <input
+                    value={masterStudent.profile.boardingHouse}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "boardingHouse", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Landlord/Landlady
+                  <input
+                    value={masterStudent.profile.landlordOrLandlady}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "landlordOrLandlady", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Previous school attended
+                  <input
+                    value={masterStudent.profile.previousSchoolAttended}
+                    onChange={(e) =>
+                      updateMasterProfile(
+                        masterStudent.id,
+                        "previousSchoolAttended",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold md:col-span-2">
+                  Activities, honors, awards
+                  <textarea
+                    value={masterStudent.profile.outstandingActivitiesHonorsAwards}
+                    onChange={(e) =>
+                      updateMasterProfile(
+                        masterStudent.id,
+                        "outstandingActivitiesHonorsAwards",
+                        e.target.value,
+                      )
+                    }
+                    rows={2}
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Mother&apos;s name
+                  <input
+                    value={masterStudent.profile.motherName}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "motherName", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Mother&apos;s age
+                  <input
+                    value={masterStudent.profile.motherAge}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "motherAge", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Mother&apos;s occupation
+                  <input
+                    value={masterStudent.profile.motherOccupation}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "motherOccupation", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Father&apos;s name
+                  <input
+                    value={masterStudent.profile.fatherName}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "fatherName", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Father&apos;s age
+                  <input
+                    value={masterStudent.profile.fatherAge}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "fatherAge", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Father&apos;s occupation
+                  <input
+                    value={masterStudent.profile.fatherOccupation}
+                    onChange={(e) =>
+                      updateMasterProfile(masterStudent.id, "fatherOccupation", e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Mother/Father remarried details
+                  <input
+                    value={masterStudent.profile.motherFatherRemarried}
+                    onChange={(e) =>
+                      updateMasterProfile(
+                        masterStudent.id,
+                        "motherFatherRemarried",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Step-parent/guardian name
+                  <input
+                    value={masterStudent.profile.stepParentOrGuardianName}
+                    onChange={(e) =>
+                      updateMasterProfile(
+                        masterStudent.id,
+                        "stepParentOrGuardianName",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Step-parent/guardian age
+                  <input
+                    value={masterStudent.profile.stepParentOrGuardianAge}
+                    onChange={(e) =>
+                      updateMasterProfile(
+                        masterStudent.id,
+                        "stepParentOrGuardianAge",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <label className="grid gap-1 text-sm font-semibold">
+                  Step-parent/guardian occupation
+                  <input
+                    value={masterStudent.profile.stepParentOrGuardianOccupation}
+                    onChange={(e) =>
+                      updateMasterProfile(
+                        masterStudent.id,
+                        "stepParentOrGuardianOccupation",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </label>
+
+                <div className="grid gap-2 text-sm font-semibold text-slate-700 md:col-span-2 md:grid-cols-3">
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={masterStudent.profile.parentsMarried}
+                      onChange={(e) =>
+                        updateMasterProfile(
+                          masterStudent.id,
+                          "parentsMarried",
+                          e.target.checked,
+                        )
+                      }
+                    />
+                    Parents married
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={masterStudent.profile.parentsSeparated}
+                      onChange={(e) =>
+                        updateMasterProfile(
+                          masterStudent.id,
+                          "parentsSeparated",
+                          e.target.checked,
+                        )
+                      }
+                    />
+                    Parents separated
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={masterStudent.profile.parentsNotMarried}
+                      onChange={(e) =>
+                        updateMasterProfile(
+                          masterStudent.id,
+                          "parentsNotMarried",
+                          e.target.checked,
+                        )
+                      }
+                    />
+                    Parents not married
+                  </label>
+                </div>
 
                 <label className="grid gap-1 text-sm font-semibold">
                   Student status
@@ -717,7 +1226,7 @@ export default function CouncilorDashboard() {
                 </label>
 
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     if (assignmentSectionId && !assignmentTeacherId) {
                       setNotice({
                         type: "error",
@@ -728,6 +1237,35 @@ export default function CouncilorDashboard() {
 
                     const shouldContinue = window.confirm("Save profile and assignment changes? Click OK to continue or Cancel to review.");
                     if (!shouldContinue) return;
+
+                    try {
+                      const response = await fetch(`/api/students/${masterStudent.id}`, {
+                        method: "PATCH",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          status: masterStudent.status,
+                          profile: masterStudent.profile,
+                          teacherId: assignmentTeacherId || null,
+                          sectionId: assignmentSectionId || null,
+                        }),
+                      });
+
+                      if (!response.ok) {
+                        const result = (await response.json().catch(() => ({}))) as {
+                          error?: string;
+                        };
+                        throw new Error(result.error ?? "Failed to update student in database.");
+                      }
+                    } catch (error) {
+                      const message =
+                        error instanceof Error ? error.message : "Failed to update student in database.";
+                      setNotice({
+                        type: "error",
+                        text: `${message} Updated locally as fallback.`,
+                      });
+                    }
 
                     updateDatabase((current) => {
                       const nextSections = current.sections.map((section) => ({
@@ -958,7 +1496,7 @@ export default function CouncilorDashboard() {
                     </thead>
                     <tbody>
                       {masterStudent.logs.map((entry, index) => {
-                        const match = entry.match(guidanceEntryPattern);
+                        const match = guidanceEntryPattern.exec(entry);
                         const time = match?.[1] ?? "-";
                         const action = match?.[2] ?? "-";
                         const actionDetail = match?.[3] ?? "";

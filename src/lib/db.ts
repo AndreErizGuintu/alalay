@@ -20,7 +20,62 @@ export type StudentProfile = {
   contact: string;
   program: string;
   yearLevel: string;
+  birthDate: string;
+  birthPlace: string;
+  address: string;
+  telCellNo: string;
+  sex: string;
+  boardingHouse: string;
+  landlordOrLandlady: string;
+  previousSchoolAttended: string;
+  outstandingActivitiesHonorsAwards: string;
+  motherName: string;
+  motherAge: string;
+  motherOccupation: string;
+  fatherName: string;
+  fatherAge: string;
+  fatherOccupation: string;
+  parentsMarried: boolean;
+  parentsSeparated: boolean;
+  parentsNotMarried: boolean;
+  motherFatherRemarried: string;
+  stepParentOrGuardianName: string;
+  stepParentOrGuardianAge: string;
+  stepParentOrGuardianOccupation: string;
 };
+
+export const createDefaultStudentProfile = (
+  partial: Partial<StudentProfile> = {},
+): StudentProfile => ({
+  age: 18,
+  guardian: "To be updated",
+  contact: "To be updated",
+  program: "BSIT",
+  yearLevel: "1ST YR",
+  birthDate: "",
+  birthPlace: "",
+  address: "",
+  telCellNo: "",
+  sex: "",
+  boardingHouse: "",
+  landlordOrLandlady: "",
+  previousSchoolAttended: "",
+  outstandingActivitiesHonorsAwards: "",
+  motherName: "",
+  motherAge: "",
+  motherOccupation: "",
+  fatherName: "",
+  fatherAge: "",
+  fatherOccupation: "",
+  parentsMarried: false,
+  parentsSeparated: false,
+  parentsNotMarried: false,
+  motherFatherRemarried: "",
+  stepParentOrGuardianName: "",
+  stepParentOrGuardianAge: "",
+  stepParentOrGuardianOccupation: "",
+  ...partial,
+});
 
 export type SubjectGrade = {
   name: string;
@@ -82,7 +137,7 @@ export const normalizeSubjectGrades = (student: Student): SubjectGrade[] => {
     return defaults.map((entry, index) => {
       const current = existing[index];
       return {
-        name: current?.name || entry.name,
+        name: current?.name ?? entry.name,
         prelim: current?.prelim ?? "",
         midterm: current?.midterm ?? "",
         finals: current?.finals ?? "",
@@ -159,14 +214,14 @@ const sectionNames = [
   "BSIT - 3RD YR B",
   "BSIT - 4TH YR A",
   "BSIT - 4TH YR B",
-  "BSEDUC - 1ST YR",
-  "BSEDUC - 2ND YR",
-  "BSEDUC - 3RD YR",
-  "BSEDUC - 4TH YR",
-  "BSBA - 1ST YR",
-  "BSBA - 2ND YR",
-  "BSBA - 3RD YR",
-  "BSBA - 4TH YR",
+  "BSCS - 1ST YR A",
+  "BSCS - 2ND YR A",
+  "BSCS - 3RD YR A",
+  "BSCS - 4TH YR A",
+  "BSCE - 1ST YR A",
+  "BSCE - 2ND YR A",
+  "BSCE - 3RD YR A",
+  "BSCE - 4TH YR A",
 ];
 
 export const makeId = () =>
@@ -191,11 +246,21 @@ export const createSeedDatabase = (): Database => {
       fullName: "Alyssa Dela Cruz",
       status: "ACTIVE",
       profile: {
-        age: 20,
-        guardian: "Marissa Dela Cruz",
-        contact: "0912-345-6789",
-        program: "BSIT",
-        yearLevel: "3RD YR",
+        ...createDefaultStudentProfile({
+          age: 20,
+          guardian: "Marissa Dela Cruz",
+          contact: "0912-345-6789",
+          program: "BSIT",
+          yearLevel: "3RD YR",
+          birthDate: "2006-02-14",
+          birthPlace: "Cebu City",
+          address: "Cebu City",
+          telCellNo: "0912-345-6789",
+          sex: "Female",
+          previousSchoolAttended: "Cebu National High School",
+          motherName: "Marissa Dela Cruz",
+          motherOccupation: "Teacher",
+        }),
       },
       assignment: { teacherId, sectionId: sections[4]?.id ?? null },
       grades: {
@@ -220,11 +285,16 @@ export const createSeedDatabase = (): Database => {
       fullName: "Rico Santos",
       status: "ACTIVE",
       profile: {
-        age: 19,
-        guardian: "Liza Santos",
-        contact: "0911-098-7654",
-        program: "BSIT",
-        yearLevel: "3RD YR",
+        ...createDefaultStudentProfile({
+          age: 19,
+          guardian: "Liza Santos",
+          contact: "0911-098-7654",
+          program: "BSIT",
+          yearLevel: "3RD YR",
+          sex: "Male",
+          previousSchoolAttended: "Sto. Tomas Integrated School",
+          motherName: "Liza Santos",
+        }),
       },
       assignment: { teacherId, sectionId: sections[4]?.id ?? null },
       grades: {
@@ -241,11 +311,16 @@ export const createSeedDatabase = (): Database => {
       fullName: "Bianca Mateo",
       status: "ACTIVE",
       profile: {
-        age: 20,
-        guardian: "Rene Mateo",
-        contact: "0922-777-1100",
-        program: "BSEDUC",
-        yearLevel: "2ND YR",
+        ...createDefaultStudentProfile({
+          age: 20,
+          guardian: "Rene Mateo",
+          contact: "0922-777-1100",
+          program: "BSCS",
+          yearLevel: "2ND YR",
+          sex: "Female",
+          previousSchoolAttended: "Minglanilla Science High School",
+          fatherName: "Rene Mateo",
+        }),
       },
       assignment: { teacherId, sectionId: sections[9]?.id ?? null },
       grades: {

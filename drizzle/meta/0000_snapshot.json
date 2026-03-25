@@ -1,0 +1,1148 @@
+{
+  "id": "aa1c1f02-6476-4184-a3df-41f75733d5e9",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.alalay_section_subject": {
+      "name": "alalay_section_subject",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "alalay_section_subject_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "sectionId": {
+          "name": "sectionId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subjectCode": {
+          "name": "subjectCode",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subjectName": {
+          "name": "subjectName",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sortOrder": {
+          "name": "sortOrder",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "section_subject_unique_idx": {
+          "name": "section_subject_unique_idx",
+          "columns": [
+            {
+              "expression": "sectionId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "subjectCode",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "section_subject_section_idx": {
+          "name": "section_subject_section_idx",
+          "columns": [
+            {
+              "expression": "sectionId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "alalay_section_subject_sectionId_alalay_section_id_fk": {
+          "name": "alalay_section_subject_sectionId_alalay_section_id_fk",
+          "tableFrom": "alalay_section_subject",
+          "tableTo": "alalay_section",
+          "columnsFrom": [
+            "sectionId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alalay_section": {
+      "name": "alalay_section",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(64)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "program": {
+          "name": "program",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "yearLevel": {
+          "name": "yearLevel",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "block": {
+          "name": "block",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "teacherId": {
+          "name": "teacherId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "section_name_unique_idx": {
+          "name": "section_name_unique_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "section_teacher_idx": {
+          "name": "section_teacher_idx",
+          "columns": [
+            {
+              "expression": "teacherId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "alalay_section_teacherId_alalay_user_id_fk": {
+          "name": "alalay_section_teacherId_alalay_user_id_fk",
+          "tableFrom": "alalay_section",
+          "tableTo": "alalay_user",
+          "columnsFrom": [
+            "teacherId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alalay_student_family_background": {
+      "name": "alalay_student_family_background",
+      "schema": "",
+      "columns": {
+        "studentId": {
+          "name": "studentId",
+          "type": "varchar(64)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "motherName": {
+          "name": "motherName",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motherAge": {
+          "name": "motherAge",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motherOccupation": {
+          "name": "motherOccupation",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fatherName": {
+          "name": "fatherName",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fatherAge": {
+          "name": "fatherAge",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fatherOccupation": {
+          "name": "fatherOccupation",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parentsMarried": {
+          "name": "parentsMarried",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parentsSeparated": {
+          "name": "parentsSeparated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parentsNotMarried": {
+          "name": "parentsNotMarried",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motherFatherRemarried": {
+          "name": "motherFatherRemarried",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stepParentOrGuardianName": {
+          "name": "stepParentOrGuardianName",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stepParentOrGuardianAge": {
+          "name": "stepParentOrGuardianAge",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stepParentOrGuardianOccupation": {
+          "name": "stepParentOrGuardianOccupation",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "student_family_student_idx": {
+          "name": "student_family_student_idx",
+          "columns": [
+            {
+              "expression": "studentId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "alalay_student_family_background_studentId_alalay_student_id_fk": {
+          "name": "alalay_student_family_background_studentId_alalay_student_id_fk",
+          "tableFrom": "alalay_student_family_background",
+          "tableTo": "alalay_student",
+          "columnsFrom": [
+            "studentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alalay_student_guidance_log": {
+      "name": "alalay_student_guidance_log",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(64)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "studentId": {
+          "name": "studentId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guidanceTime": {
+          "name": "guidanceTime",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "actionType": {
+          "name": "actionType",
+          "type": "alalay_guidance_action_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "actionDetail": {
+          "name": "actionDetail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "offenseType": {
+          "name": "offenseType",
+          "type": "alalay_offense_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "entry": {
+          "name": "entry",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "student_guidance_student_idx": {
+          "name": "student_guidance_student_idx",
+          "columns": [
+            {
+              "expression": "studentId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "alalay_student_guidance_log_studentId_alalay_student_id_fk": {
+          "name": "alalay_student_guidance_log_studentId_alalay_student_id_fk",
+          "tableFrom": "alalay_student_guidance_log",
+          "tableTo": "alalay_student",
+          "columnsFrom": [
+            "studentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alalay_student_subject_grade": {
+      "name": "alalay_student_subject_grade",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "alalay_student_subject_grade_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "studentId": {
+          "name": "studentId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sectionSubjectId": {
+          "name": "sectionSubjectId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prelim": {
+          "name": "prelim",
+          "type": "numeric(5, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "midterm": {
+          "name": "midterm",
+          "type": "numeric(5, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finals": {
+          "name": "finals",
+          "type": "numeric(5, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "student_subject_grade_unique_idx": {
+          "name": "student_subject_grade_unique_idx",
+          "columns": [
+            {
+              "expression": "studentId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "sectionSubjectId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "student_grade_student_idx": {
+          "name": "student_grade_student_idx",
+          "columns": [
+            {
+              "expression": "studentId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "alalay_student_subject_grade_studentId_alalay_student_id_fk": {
+          "name": "alalay_student_subject_grade_studentId_alalay_student_id_fk",
+          "tableFrom": "alalay_student_subject_grade",
+          "tableTo": "alalay_student",
+          "columnsFrom": [
+            "studentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "alalay_student_subject_grade_sectionSubjectId_alalay_section_subject_id_fk": {
+          "name": "alalay_student_subject_grade_sectionSubjectId_alalay_section_subject_id_fk",
+          "tableFrom": "alalay_student_subject_grade",
+          "tableTo": "alalay_section_subject",
+          "columnsFrom": [
+            "sectionSubjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alalay_student": {
+      "name": "alalay_student",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(64)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "studentNumber": {
+          "name": "studentNumber",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fullName": {
+          "name": "fullName",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "imageUrl": {
+          "name": "imageUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "alalay_user_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ACTIVE'"
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian": {
+          "name": "guardian",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contact": {
+          "name": "contact",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "program": {
+          "name": "program",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "yearLevel": {
+          "name": "yearLevel",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "birthDate": {
+          "name": "birthDate",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birthPlace": {
+          "name": "birthPlace",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telCellNo": {
+          "name": "telCellNo",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "yearSectionText": {
+          "name": "yearSectionText",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sex": {
+          "name": "sex",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "boardingHouse": {
+          "name": "boardingHouse",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "landlordOrLandlady": {
+          "name": "landlordOrLandlady",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "previousSchoolAttended": {
+          "name": "previousSchoolAttended",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "outstandingActivitiesHonorsAwards": {
+          "name": "outstandingActivitiesHonorsAwards",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "teacherId": {
+          "name": "teacherId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sectionId": {
+          "name": "sectionId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "student_number_unique_idx": {
+          "name": "student_number_unique_idx",
+          "columns": [
+            {
+              "expression": "studentNumber",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "student_section_idx": {
+          "name": "student_section_idx",
+          "columns": [
+            {
+              "expression": "sectionId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "student_teacher_idx": {
+          "name": "student_teacher_idx",
+          "columns": [
+            {
+              "expression": "teacherId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "student_status_idx": {
+          "name": "student_status_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "alalay_student_teacherId_alalay_user_id_fk": {
+          "name": "alalay_student_teacherId_alalay_user_id_fk",
+          "tableFrom": "alalay_student",
+          "tableTo": "alalay_user",
+          "columnsFrom": [
+            "teacherId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "alalay_student_sectionId_alalay_section_id_fk": {
+          "name": "alalay_student_sectionId_alalay_section_id_fk",
+          "tableFrom": "alalay_student",
+          "tableTo": "alalay_section",
+          "columnsFrom": [
+            "sectionId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alalay_system_log": {
+      "name": "alalay_system_log",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(64)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "actor": {
+          "name": "actor",
+          "type": "alalay_role_shortcut",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "name": "action",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "system_log_created_idx": {
+          "name": "system_log_created_idx",
+          "columns": [
+            {
+              "expression": "createdAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alalay_teacher_section_subject": {
+      "name": "alalay_teacher_section_subject",
+      "schema": "",
+      "columns": {
+        "teacherId": {
+          "name": "teacherId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sectionSubjectId": {
+          "name": "sectionSubjectId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "teacher_section_subject_teacher_idx": {
+          "name": "teacher_section_subject_teacher_idx",
+          "columns": [
+            {
+              "expression": "teacherId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "alalay_teacher_section_subject_teacherId_alalay_user_id_fk": {
+          "name": "alalay_teacher_section_subject_teacherId_alalay_user_id_fk",
+          "tableFrom": "alalay_teacher_section_subject",
+          "tableTo": "alalay_user",
+          "columnsFrom": [
+            "teacherId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "alalay_teacher_section_subject_sectionSubjectId_alalay_section_subject_id_fk": {
+          "name": "alalay_teacher_section_subject_sectionSubjectId_alalay_section_subject_id_fk",
+          "tableFrom": "alalay_teacher_section_subject",
+          "tableTo": "alalay_section_subject",
+          "columnsFrom": [
+            "sectionSubjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "teacher_section_subject_pk": {
+          "name": "teacher_section_subject_pk",
+          "columns": [
+            "teacherId",
+            "sectionSubjectId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alalay_user": {
+      "name": "alalay_user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(64)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "fullName": {
+          "name": "fullName",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "alalay_user_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shortcut": {
+          "name": "shortcut",
+          "type": "alalay_role_shortcut",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "alalay_user_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ACTIVE'"
+        },
+        "assignedSubjectCodes": {
+          "name": "assignedSubjectCodes",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "user_username_unique_idx": {
+          "name": "user_username_unique_idx",
+          "columns": [
+            {
+              "expression": "username",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "user_role_idx": {
+          "name": "user_role_idx",
+          "columns": [
+            {
+              "expression": "role",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.alalay_guidance_action_type": {
+      "name": "alalay_guidance_action_type",
+      "schema": "public",
+      "values": [
+        "Solution",
+        "Penalty"
+      ]
+    },
+    "public.alalay_offense_type": {
+      "name": "alalay_offense_type",
+      "schema": "public",
+      "values": [
+        "Minor Offense",
+        "Major Offense"
+      ]
+    },
+    "public.alalay_role_shortcut": {
+      "name": "alalay_role_shortcut",
+      "schema": "public",
+      "values": [
+        "@admin",
+        "@edu",
+        "@conci"
+      ]
+    },
+    "public.alalay_user_role": {
+      "name": "alalay_user_role",
+      "schema": "public",
+      "values": [
+        "ADMIN",
+        "TEACHER",
+        "COUNCILOR"
+      ]
+    },
+    "public.alalay_user_status": {
+      "name": "alalay_user_status",
+      "schema": "public",
+      "values": [
+        "ACTIVE",
+        "DISABLED",
+        "DROPOUT"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

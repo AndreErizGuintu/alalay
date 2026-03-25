@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DB_KEY, createSeedDatabase, defaultSubjectNames, type Database } from "~/lib/db";
+import {
+  DB_KEY,
+  createDefaultStudentProfile,
+  createSeedDatabase,
+  defaultSubjectNames,
+  type Database,
+} from "~/lib/db";
 
 const roleSuffix: Record<Database["users"][number]["role"], string> = {
   ADMIN: "@admin",
@@ -61,10 +67,16 @@ const normalizeUsers = (db: Database): Database => {
   });
 
   const nextStudents = db.students.map((student) => {
-    if (!teacherId) return student;
-    if (!student.assignment.teacherId) return student;
+    const normalizedProfile = createDefaultStudentProfile(student.profile);
+    if (!teacherId || !student.assignment.teacherId) {
+      return {
+        ...student,
+        profile: normalizedProfile,
+      };
+    }
     return {
       ...student,
+      profile: normalizedProfile,
       assignment: {
         ...student.assignment,
         teacherId,
